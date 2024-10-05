@@ -30,7 +30,7 @@ class LivroSerializer(serializers.Serializer):
     titulo = serializers.CharField(max_length=200)
     autor = serializers.PrimaryKeyRelatedField(queryset=Autor.objects.all())
     categoria = serializers.PrimaryKeyRelatedField(queryset=Categoria.objects.all())
-    #publicado_em = serializers.DateField()
+    publicado_em = serializers.DateField()
  
     def create(self, validated_data):
         return Livro.objects.create(**validated_data)
@@ -40,6 +40,6 @@ class LivroSerializer(serializers.Serializer):
         instance.autor = validated_data.get('autor', instance.autor)
         instance.categoria = validated_data.get('categoria',
 instance.categoria)
-        #instance.publicado_em = validated_data.get('publicado_em', instance.publicado_em)
+        instance.publicado_em = validated_data.get('publicado_em', instance.publicado_em)
         instance.save()
         return instance

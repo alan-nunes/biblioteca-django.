@@ -37,3 +37,7 @@ dmypy.json
 
 # Pyre
 .pyre/
+
+# IDEs
+.idea/
+.vscode/
