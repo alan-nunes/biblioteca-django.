@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>pratica-cbv-paginacao-ordenacao-busca.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="trilha-7---desenvolvimento-back-end-python">Trilha 7 - Desenvolvimento Back-End (Python)</h1>
+<blockquote>
+<p>Exercício Prático 2: Class-Based Views, Paginação, Ordenação e Busca</p>
+</blockquote>
+<h3 id="contexto">Contexto</h3>
+<p>Você está desenvolvendo um sistema de gerenciamento de biblioteca que permite a administração de livros, autores e categorias. Neste exercício, você vai evoluir o exercício anterior, reimplementando as funcionalidades utilizando class-based views em vez de function-based views. Além disso, serão adicionadas novas funcionalidades, como recursos de paginação de resultados, ordenação e busca de termos utilizando a biblioteca django-filter.</p>
+<hr>
+<h3 id="objetivo">Objetivo</h3>
+<ol>
+<li>Reimplementar as views utilizando class-based views.</li>
+<li>Adicionar recursos de paginação de resultados, ordenação e busca de termos.</li>
+<li>Criar um repositório público no GitHub para a submissão do exercício.</li>
+</ol>
+<h3 id="passo-1-reimplementa%C3%A7%C3%A3o-das-views">Passo 1: Reimplementação das Views</h3>
+<ol>
+<li>No arquivo <code>views.py</code> do aplicativo <code>core</code>, reimplemente as views utilizando class-based views em vez de function-based views.</li>
+</ol>
+<p>Serão fornecidos exemplos para o modelo <code>Livro</code>, os exemplos devem ser replicados também para <code>Categoria</code> e <code>Autor</code>.</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">from</span> rest_framework <span class="hljs-keyword">import</span> generics
+<span class="hljs-keyword">from</span> .models <span class="hljs-keyword">import</span> Livro
+<span class="hljs-keyword">from</span> .serializers <span class="hljs-keyword">import</span> LivroSerializer
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LivroList</span><span class="hljs-params">(generics.ListCreateAPIView)</span>:</span>
+    queryset = Livro.objects.all()
+    serializer_class = LivroSerializer
+    name = <span class="hljs-string">"livro-list"</span>
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LivroDetail</span><span class="hljs-params">(generics.RetrieveUpdateDestroyAPIView)</span>:</span>
+    queryset = Livro.objects.all()
+    serializer_class = LivroSerializer
+    name = <span class="hljs-string">"livro-detail"</span>
+</div></code></pre>
+<blockquote>
+<p>Atenção: propague as mudanças, com as devidas adequações, para as views das demais classes de modelo.</p>
+</blockquote>
+<h3 id="passo-2-adi%C3%A7%C3%A3o-de-recursos-de-pagina%C3%A7%C3%A3o-ordena%C3%A7%C3%A3o-e-busca">Passo 2: Adição de Recursos de Paginação, Ordenação e Busca</h3>
+<ol>
+<li>
+<p>Instale a biblioteca django-filter:</p>
+<pre class="hljs"><code><div>pip install django-filter
+</div></code></pre>
+</li>
+<li>
+<p>Configure a biblioteca django-filter no projeto.</p>
+<ol>
+<li>Incluir a biblioteca em <code>INSTALLED_APPS</code>.</li>
+<li>Realizar configuração global dos filtros no projeto. Adicionar a configuração <code>DEFAULT_FILTER_BACKENDS</code>, incluindo <code>DjangoFilterBackend</code>, <code>OrderingFilter</code> e <code>SearchFilter</code>.</li>
+</ol>
+</li>
+<li>
+<p>Realize a configuração global de paginação no projeto.</p>
+<ol>
+<li>Configurar <code>DEFAULT_PAGINATION_CLASS</code> para trabalhar com <code>LimitOffsetPagination</code>.</li>
+<li>Configurar <code>PAGE_SIZE</code> para o tamanho <code>5</code>.</li>
+</ol>
+</li>
+<li>
+<p>Crie um filtro personalizado, importe a classe <code>FilterSet</code> do django-filter e crie filtros para a classe <code>Livro</code> de acordo com código abaixo:</p>
+</li>
+</ol>
+<pre class="hljs"><code><div><span class="hljs-keyword">from</span> django_filters <span class="hljs-keyword">import</span> rest_framework <span class="hljs-keyword">as</span> filters
+<span class="hljs-keyword">from</span> .models <span class="hljs-keyword">import</span> Livro
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LivroFilter</span><span class="hljs-params">(filters.FilterSet)</span>:</span>
+    titulo = filters.CharFilter(lookup_expr=<span class="hljs-string">'icontains'</span>)
+    autor = filters.CharFilter(field_name=<span class="hljs-string">'autor__nome'</span>, lookup_expr=<span class="hljs-string">'icontains'</span>)
+    categoria = filters.AllValuesFilter(field_name=<span class="hljs-string">'categoria__nome'</span>)
+
+    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Meta</span>:</span>
+        model = Livro
+        fields = [<span class="hljs-string">'titulo'</span>, <span class="hljs-string">'autor'</span>, <span class="hljs-string">'categoria'</span>]
+</div></code></pre>
+<ol start="4">
+<li>Atualize a view para utilizar o filtro criado:</li>
+</ol>
+<pre class="hljs"><code><div><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LivroList</span><span class="hljs-params">(generics.ListCreateAPIView)</span>:</span>
+    queryset = Livro.objects.all()
+    serializer_class = LivroSerializer
+    filterset_class = LivroFilter
+</div></code></pre>
+<blockquote>
+<p>Atenção: Implemente filtros de busca para o atributo <code>nome</code>, utilizando o prefixo <code>^ (inicia com)</code>, para <code>Categoria</code> e <code>Livro</code>.</p>
+</blockquote>
+<ol start="5">
+<li>Adicione recursos de ordenação nas classes de views:</li>
+</ol>
+<p>A view <code>LivroList</code> deve permitir a ordenação por <code>titulo</code>, <code>autor</code>, <code>categoria</code>, <code>publicado_em</code>.</p>
+<pre class="hljs"><code><div>ordering_fields = [<span class="hljs-string">'titulo'</span>, <span class="hljs-string">'autor'</span>, <span class="hljs-string">'categoria'</span>, <span class="hljs-string">'publicado_em'</span>]
+</div></code></pre>
+<blockquote>
+<p>Atenção: Possibilite a ordenação a partir do atributo <code>nome</code> para <code>Categoria</code> e <code>Livro</code>.</p>
+</blockquote>
+<h3 id="passo-3-configura%C3%A7%C3%A3o-das-urls">Passo 3: Configuração das URLs</h3>
+<ol>
+<li>Atualize as rotas no <code>urls.py</code> do aplicativo <code>core</code> para utilizar as novas classes de views:</li>
+</ol>
+<pre class="hljs"><code><div><span class="hljs-keyword">from</span> django.urls <span class="hljs-keyword">import</span> path
+<span class="hljs-keyword">from</span> . <span class="hljs-keyword">import</span> views
+
+urlpatterns = [
+    path(<span class="hljs-string">'livros/'</span>, views.LivroList.as_view(), name=<span class="hljs-string">'livros-list'</span>),
+    path(<span class="hljs-string">'livros/&lt;int:pk&gt;/'</span>, views.LivroDetail.as_view(), name=<span class="hljs-string">'livro-detail'</span>),
+]
+</div></code></pre>
+<blockquote>
+<p>Atenção: propague as mudanças, com as devidas adequações, para as views das demais classes de modelo.</p>
+</blockquote>
+<h3 id="passo-4-produ%C3%A7%C3%A3o-de-dados-de-teste"><strong>Passo 4: Produção de dados de teste</strong></h3>
+<p>Dentro da aplicação <code>core</code> crie as pastas <code>management/commands</code>. A partir da pasta <code>commands</code>, você deve criar dois novos arquivos: <code>___init__.py</code> e <code>populate_db.py</code>.</p>
+<p>O arquivo <code>__init__.py</code> em um diretório de um projeto Python tem a função principal de indicar que o diretório deve ser tratado como um pacote. Isso permite que os módulos e subpacotes dentro desse diretório sejam importados.</p>
+<p>Adicione o seguinte conteúdo ao arquivo <code>populate_db.py</code>:</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">from</span> django.core.management.base <span class="hljs-keyword">import</span> BaseCommand
+<span class="hljs-keyword">from</span> core.models <span class="hljs-keyword">import</span> Categoria, Autor, Livro
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Command</span><span class="hljs-params">(BaseCommand)</span>:</span>
+    help = <span class="hljs-string">"Cria registros de exemplo no banco de dados"</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">handle</span><span class="hljs-params">(self, *args, **options)</span>:</span>
+        categoria_misterio = Categoria.objects.create(nome=<span class="hljs-string">"Mistério"</span>)
+        categoria_ficcao = Categoria.objects.create(nome=<span class="hljs-string">"Ficção"</span>)
+        categoria_fantasia = Categoria.objects.create(nome=<span class="hljs-string">"Fantasia"</span>)
+        categoria_romance = Categoria.objects.create(nome=<span class="hljs-string">"Romance"</span>)
+
+        autor_agatha_christie = Autor.objects.create(nome=<span class="hljs-string">"Agatha Christie"</span>)
+        autor_arthur_c_clarke = Autor.objects.create(nome=<span class="hljs-string">"Arthur C. Clarke"</span>)
+        autor_arthur_conan_doyle = Autor.objects.create(nome=<span class="hljs-string">"Arthur Conan Doyle"</span>)
+        autor_cs_lewis = Autor.objects.create(nome=<span class="hljs-string">"C.S. Lewis"</span>)
+        autor_emily_bronte = Autor.objects.create(nome=<span class="hljs-string">"Emily Brontë"</span>)
+        autor_george_rr_martin = Autor.objects.create(nome=<span class="hljs-string">"George R.R. Martin"</span>)
+        autor_isaac_asimov = Autor.objects.create(nome=<span class="hljs-string">"Isaac Asimov"</span>)
+        autor_jrr_tolkien = Autor.objects.create(nome=<span class="hljs-string">"J.R.R. Tolkien"</span>)
+
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"Assassinato no Expresso do Oriente"</span>,
+            autor=autor_agatha_christie,
+            categoria=categoria_misterio,
+            publicado_em=<span class="hljs-string">"1934-01-01"</span>,
+        )
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"Morte no Nilo"</span>,
+            autor=autor_agatha_christie,
+            categoria=categoria_misterio,
+            publicado_em=<span class="hljs-string">"1937-11-01"</span>,
+        )
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"2001: Uma Odisseia no Espaço"</span>,
+            autor=autor_arthur_c_clarke,
+            categoria=categoria_ficcao,
+            publicado_em=<span class="hljs-string">"1968-06-16"</span>,
+        )
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"Encontro com Rama"</span>,
+            autor=autor_arthur_c_clarke,
+            categoria=categoria_ficcao,
+            publicado_em=<span class="hljs-string">"1973-06-01"</span>,
+        )
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"O Cão dos Baskervilles"</span>,
+            autor=autor_arthur_conan_doyle,
+            categoria=categoria_misterio,
+            publicado_em=<span class="hljs-string">"1902-04-01"</span>,
+        )
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"Um Estudo em Vermelho"</span>,
+            autor=autor_arthur_conan_doyle,
+            categoria=categoria_misterio,
+            publicado_em=<span class="hljs-string">"1887-11-01"</span>,
+        )
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"As Crônicas de Nárnia"</span>,
+            autor=autor_cs_lewis,
+            categoria=categoria_fantasia,
+            publicado_em=<span class="hljs-string">"1950-10-16"</span>,
+        )
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"O Leão, a Feiticeira e o Guarda-Roupa"</span>,
+            autor=autor_cs_lewis,
+            categoria=categoria_fantasia,
+            publicado_em=<span class="hljs-string">"1950-10-16"</span>,
+        )
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"O Morro dos Ventos Uivantes"</span>,
+            autor=autor_emily_bronte,
+            categoria=categoria_romance,
+            publicado_em=<span class="hljs-string">"1847-12-01"</span>,
+        )
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"A Guerra dos Tronos"</span>,
+            autor=autor_george_rr_martin,
+            categoria=categoria_fantasia,
+            publicado_em=<span class="hljs-string">"1996-08-06"</span>,
+        )
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"A Fúria dos Reis"</span>,
+            autor=autor_george_rr_martin,
+            categoria=categoria_fantasia,
+            publicado_em=<span class="hljs-string">"1998-11-16"</span>,
+        )
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"Fundação"</span>,
+            autor=autor_isaac_asimov,
+            categoria=categoria_ficcao,
+            publicado_em=<span class="hljs-string">"1951-06-01"</span>,
+        )
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"Eu, Robô"</span>,
+            autor=autor_isaac_asimov,
+            categoria=categoria_ficcao,
+            publicado_em=<span class="hljs-string">"1950-12-02"</span>,
+        )
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"O Senhor dos Anéis"</span>,
+            autor=autor_jrr_tolkien,
+            categoria=categoria_fantasia,
+            publicado_em=<span class="hljs-string">"1954-07-29"</span>,
+        )
+        Livro.objects.create(
+            titulo=<span class="hljs-string">"O Hobbit"</span>,
+            autor=autor_jrr_tolkien,
+            categoria=categoria_fantasia,
+            publicado_em=<span class="hljs-string">"1937-09-21"</span>,
+        )
+</div></code></pre>
+<p>O código Python acima cria registros de exemplo em um banco de dados usando o Django e o recurso Command.</p>
+<p>Dentro do método handle, o código cria várias instâncias das classes Categoria, Autor e Livro, preenchendo-os com dados fictícios.</p>
+<p>Assumindo que o banco de dados SQLite da aplicação já foi criado seguindo as orientações do exercício anterior, aplique o comando abaixo para a inserção dos registros para testes:</p>
+<pre class="hljs"><code><div>python manage.py populate_db
+</div></code></pre>
+<blockquote>
+<p>Atenção: a execução do comando deve ser realizada apenas uma vez, caso contrário os registros serão inseridos em duplicidade no banco de dados.</p>
+</blockquote>
+<h3 id="passo-5-teste-da-api"><strong>Passo 5: Teste da API</strong></h3>
+<ol>
+<li>
+<p>Inicie o servidor Django:</p>
+<pre class="hljs"><code><div>python manage.py runserver
+</div></code></pre>
+</li>
+<li>
+<p>Utilize o Postman para testar as seguintes operações na API, utilizando os recursos de paginação, ordenação e busca:</p>
+<ul>
+<li><strong>Listar todos os livros com paginação (GET <code>/livros/?limit=&lt;limite&gt;&amp;offset=&lt;deslocamento&gt;</code>)</strong></li>
+<li><strong>Ordenar os livros por título (GET <code>/livros/?ordering=titulo</code>)</strong></li>
+<li><strong>Buscar livros por título, autor ou categoria (GET <code>/livros/?titulo=&lt;termo_busca&gt;&amp;autor=&lt;termo_busca&gt;&amp;categoria=&lt;termo_busca&gt;</code>)</strong></li>
+<li><strong>Criar um novo livro (POST <code>/livros/create/</code>)</strong></li>
+<li><strong>Obter detalhes de um livro específico (GET <code>/livros/&lt;id&gt;/</code>)</strong></li>
+<li><strong>Atualizar um livro (PUT <code>/livros/&lt;id&gt;/</code>)</strong></li>
+<li><strong>Deletar um livro (DELETE <code>/livros/&lt;id&gt;/</code>)</strong></li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>Atenção: realize testes também nas funcionalidades desenvolvidas paras as demais classes de modelo.</p>
+</blockquote>
+<h3 id="passo-6-cria%C3%A7%C3%A3o-do-arquivo-requirementstxt"><strong>Passo 6: Criação do arquivo requirements.txt</strong></h3>
+<p>A boa prática de gerar o arquivo requirements.txt em projetos Python visa garantir que todas as dependências necessárias para o projeto sejam claramente listadas com suas versões exatas. Isso facilita a reprodução do ambiente por outros desenvolvedores ou sistemas automatizados, garantindo que o projeto funcione com as mesmas bibliotecas e versões utilizadas no desenvolvimento.</p>
+<p>A partir do diretório raiz, utilize o comando pip freeze para gerar o arquivo requirements.txt:</p>
+<pre class="hljs"><code><div>pip freeze &gt; requirements.txt
+</div></code></pre>
+<blockquote>
+<p>Após o comando, o novo arquivo será gerado e deve ser vesionado junto ao código projeto.</p>
+</blockquote>
+<h3 id="passo-7-cria%C3%A7%C3%A3o-de-reposit%C3%B3rio-p%C3%BAblico-no-github"><strong>Passo 7: Criação de Repositório Público no GitHub</strong></h3>
+<ol>
+<li><strong>Crie um repositório público na sua conta pessoal do GitHub</strong>:
+<ul>
+<li>Acesse <a href="https://github.com/">GitHub</a> e faça login.</li>
+<li>Clique em &quot;New&quot; (para criar um novo repositório).</li>
+<li>Dê um nome ao repositório, por exemplo, <code>biblioteca-django-v2</code>.</li>
+<li>Marque a opção &quot;Public&quot; e clique em &quot;Create repository&quot;.</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>Você pode também optar por utilizar o repositório criado no exercício anterior. Se for essa a sua opção, desconsidere as instruções 2 e 3.</p>
+</blockquote>
+<ol start="2">
+<li>
+<p><strong>Inclua o arquivo <code>.gitignore</code> no projeto</strong>:</p>
+<ul>
+<li>Crie um arquivo chamado <code>.gitignore</code> na raiz do projeto.</li>
+<li>Adicione as seguintes linhas ao arquivo <code>.gitignore</code>:<pre class="hljs"><code><div># Byte-compiled 
+__pycache__/
+*.py[cod]
+*$py.class
+
+# virtualenv
+venv/
+.venv/
+
+# Django:
+*.log
+*.pot
+db.sqlite3
+media/
+
+# IDEs
+.idea/
+.vscode/
+</div></code></pre>
+</li>
+</ul>
+<p>O arquivo <code>.gitignore</code> é usado para especificar quais arquivos e diretórios devem ser ignorados pelo Git. É importante incluí-lo no seu projeto para evitar que arquivos sensíveis ou desnecessários sejam adicionados aos commits e enviados para o repositório. Não é considerado uma boa prática versionar arquivos binários.</p>
+</li>
+<li>
+<p><strong>Adicione o repositório remoto ao projeto local</strong>:</p>
+<ul>
+<li>No terminal, na raiz do projeto Django, inicialize o repositório git:<pre class="hljs"><code><div>git init
+</div></code></pre>
+</li>
+<li>Adicione todos os arquivos ao commit:<pre class="hljs"><code><div>git add .
+</div></code></pre>
+</li>
+<li>Faça um commit:<pre class="hljs"><code><div>git commit -m <span class="hljs-string">"Initial commit"</span>
+</div></code></pre>
+</li>
+<li>Adicione o repositório remoto:<pre class="hljs"><code><div>git remote add origin https://github.com/username/biblioteca-django-v2.git
+</div></code></pre>
+(Substitua <code>username</code> pelo seu nome de usuário no GitHub)</li>
+</ul>
+</li>
+<li>
+<p><strong>Faça push dos arquivos para o repositório remoto</strong>:</p>
+<pre class="hljs"><code><div>git push -u origin main
+</div></code></pre>
+</li>
+<li>
+<p><strong>Envie o link do repositório como solução da atividade</strong>:</p>
+<ul>
+<li>Copie a URL do repositório (por exemplo, <code>https://github.com/username/biblioteca-django-v2</code>).</li>
+<li>Acesse a área de atividades da trilha e cole o link para a submissão.</li>
+</ul>
+</li>
+</ol>
+
+</body>
+</html>
